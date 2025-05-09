@@ -23,6 +23,7 @@ import { fastForward } from './api/fastForward.js'
 import { fetch } from './api/fetch.js'
 import { findMergeBase } from './api/findMergeBase.js'
 import { findRoot } from './api/findRoot.js'
+import { fush } from "./api/fush.js"
 import { getConfig } from './api/getConfig.js'
 import { getConfigAll } from './api/getConfigAll.js'
 import { getRemoteInfo } from './api/getRemoteInfo.js'
@@ -73,10 +74,6 @@ import * as Errors from './errors/index.js'
 
 // named exports
 export {
-  Errors,
-  STAGE,
-  TREE,
-  WORKDIR,
   abortMerge,
   add,
   addNote,
@@ -85,22 +82,17 @@ export {
   branch,
   checkout,
   clone,
-  commit,
-  getConfig,
-  getConfigAll,
-  setConfig,
-  currentBranch,
+  commit, currentBranch,
   deleteBranch,
   deleteRef,
   deleteRemote,
-  deleteTag,
-  expandOid,
+  deleteTag, Errors, expandOid,
   expandRef,
   fastForward,
   fetch,
   findMergeBase,
-  findRoot,
-  getRemoteInfo,
+  findRoot, fush, getConfig,
+  getConfigAll, getRemoteInfo,
   getRemoteInfo2,
   hashBlob,
   indexPack,
@@ -128,21 +120,15 @@ export {
   remove,
   removeNote,
   renameBranch,
-  resetIndex,
-  updateIndex,
-  resolveRef,
-  status,
+  resetIndex, resolveRef, setConfig, STAGE, stash, status,
   statusMatrix,
-  tag,
-  version,
-  walk,
-  writeBlob,
+  tag, TREE, updateIndex, version,
+  walk, WORKDIR, writeBlob,
   writeCommit,
   writeObject,
   writeRef,
   writeTag,
-  writeTree,
-  stash,
+  writeTree
 }
 
 // default export
@@ -217,4 +203,5 @@ export default {
   writeTag,
   writeTree,
   stash,
+  fush
 }
