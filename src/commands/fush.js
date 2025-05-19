@@ -1,4 +1,5 @@
 import { GitRemoteManager } from '../managers/GitRemoteManager.js';
+import { GitSideBand } from '../models/GitSideBand.js';
 import { collect } from '../utils/collect.js';
 import { filterCapabilities } from '../utils/filterCapabilities.js';
 import { pkg } from '../utils/pkg.js';
@@ -87,6 +88,12 @@ export async function _fush({
             ]
         )
 
+        const pushCapabilities = filterCapabilities(
+            [...targetInfo.capabilities],
+            ['report-status', 'side-band-64k', `agent=${pkg.agent}`]
+        );
+
+
 
         // Request missing objects from the source remote
         const packstream = await writeUploadPackRequest({
@@ -113,7 +120,7 @@ export async function _fush({
         const packfileSha = packfile.slice(-20).toString('hex')
 
         const packstream1 = await writeReceivePackRequest({
-            capabilities,
+            capabilities: pushCapabilities,
             triplets: [{
                 oldoid: "0000000000000000000000000000000000000000",
                 oid: sourceInfo.refs.get("refs/heads/billytrend-cohere-patch-1"),
@@ -133,15 +140,19 @@ export async function _fush({
             service: 'git-receive-pack',
             url: targetUrl,
             headers,
-            body: [...packstream1, ...packfile],
+            body: [...packstream1, packfile],
             auth: onAuth,
         });
 
-        const targetResult = await parseReceivePackResponse(targetResponse.body);
+        const { packfile: pf, progress } = await GitSideBand.demux(targetResponse.body);
 
-        console.log('Target Response:', targetResult);
+        // Parse the response!
+        const result = await parseReceivePackResponse(pf);
 
-        if (!targetResult.ok) {
+        console.log('Target Response:', result);
+
+
+        if (!result.ok) {
             throw new Error('Failed to push packfile to target remote');
         }
 
